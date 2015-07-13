@@ -1,5 +1,7 @@
 import xml4h
 
+import six
+
 # Make commonly-used classes and functions available in xml4h module
 from xml4h.impls.xml_dom_minidom import XmlDomImplAdapter
 from xml4h.impls.xml_etree_elementtree import (
@@ -64,7 +66,7 @@ def parse(to_parse, ignore_whitespace_text_nodes=True, adapter=None):
     """
     if adapter is None:
         adapter = best_adapter
-    if isinstance(to_parse, basestring) and '<' in to_parse:
+    if isinstance(to_parse, six.string_types) and '<' in to_parse:
         return adapter.parse_string(to_parse, ignore_whitespace_text_nodes)
     else:
         return adapter.parse_file(to_parse, ignore_whitespace_text_nodes)
@@ -93,7 +95,7 @@ def build(tagname_or_element, ns_uri=None, adapter=None):
     """
     if adapter is None:
         adapter = best_adapter
-    if isinstance(tagname_or_element, basestring):
+    if isinstance(tagname_or_element, six.string_types):
         doc = adapter.create_document(
             tagname_or_element, ns_uri=ns_uri)
         element = doc.root
@@ -101,5 +103,5 @@ def build(tagname_or_element, ns_uri=None, adapter=None):
         element = tagname_or_element
     else:
         raise xml4h.exceptions.IncorrectArgumentTypeException(
-            tagname_or_element, [basestring, xml4h.nodes.Element])
+            tagname_or_element, list(six.string_types) + [xml4h.nodes.Element])
     return Builder(element)

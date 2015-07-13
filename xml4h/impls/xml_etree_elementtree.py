@@ -1,6 +1,8 @@
 import re
 import copy
 
+import six
+
 from StringIO import StringIO
 
 from xml4h.impls.interface import XmlImplAdapter
@@ -129,7 +131,7 @@ class ElementTreeAdapter(XmlImplAdapter):
         if isinstance(node, BaseET.Element):
             return True
         # For cElementTree we need to be more cunning (or find a better way)
-        if hasattr(node, 'makeelement') and isinstance(node.tag, basestring):
+        if hasattr(node, 'makeelement') and isinstance(node.tag, six.string_types):
             return True
 
     def map_node_to_class(self, node):
@@ -187,7 +189,7 @@ class ElementTreeAdapter(XmlImplAdapter):
             if n == node:
                 continue
             # Ignore non-Elements
-            if not isinstance(n.tag, basestring):
+            if not isinstance(n.tag, six.string_types):
                 continue
             if ns_uri != '*' and self.get_node_namespace_uri(n) != ns_uri:
                 continue
@@ -288,7 +290,7 @@ class ElementTreeAdapter(XmlImplAdapter):
 
     def get_node_name_prefix(self, node):
         # Ignore non-elements
-        if not isinstance(node.tag, basestring):
+        if not isinstance(node.tag, six.string_types):
             return None
         # Believe nodes that know their own prefix (likely only ETAttribute)
         if hasattr(node, 'prefix'):

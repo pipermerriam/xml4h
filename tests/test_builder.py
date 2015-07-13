@@ -7,6 +7,8 @@ import functools
 import os
 from StringIO import StringIO
 
+import six
+
 import xml.dom
 
 import xml4h
@@ -32,7 +34,7 @@ class TestBuilderMethods(unittest.TestCase):
             self.assertEqual(
                 u"Argument 123 is not one of the expected types: "
                 u"[<type 'basestring'>, <class 'xml4h.nodes.Element'>]",
-                unicode(ex))
+                six.text_type(ex))
 
 
 class BaseBuilderNodesTest(object):
