@@ -3,10 +3,9 @@ import copy
 
 import six
 
-from StringIO import StringIO
+from io import StringIO
 
 from xml4h.impls.interface import XmlImplAdapter
-from xml4h import nodes, exceptions
 
 # Import the pure-Python ElementTree implementation, if possible
 try:
@@ -93,6 +92,7 @@ class ElementTreeAdapter(XmlImplAdapter):
 
     @classmethod
     def new_impl_document(cls, root_tagname, ns_uri=None, **kwargs):
+        from xml4h import nodes
         root_nsmap = {}
         if ns_uri is not None:
             root_nsmap[None] = ns_uri
@@ -135,6 +135,7 @@ class ElementTreeAdapter(XmlImplAdapter):
             return True
 
     def map_node_to_class(self, node):
+        from xml4h import nodes, exceptions
         if isinstance(node, BaseET.ElementTree):
             return nodes.Document
         elif node.tag == BaseET.ProcessingInstruction:
@@ -210,6 +211,7 @@ class ElementTreeAdapter(XmlImplAdapter):
         converted to the prefix name '_' so it can be used despite empty
         namespace prefixes being unsupported by XPath.
         """
+        from xml4h import nodes
         namespaces_dict = {}
         if 'namespaces' in kwargs:
             namespaces_dict.update(kwargs['namespaces'])
@@ -361,6 +363,7 @@ class ElementTreeAdapter(XmlImplAdapter):
         return None
 
     def set_node_attribute_value(self, element, name, value, ns_uri=None):
+        from xml4h import nodes
         prefix = None
         if ':' in name:
             prefix, name = name.split(':')
@@ -460,6 +463,7 @@ class ElementTreeAdapter(XmlImplAdapter):
         return None
 
     def lookup_ns_prefix_for_uri(self, node, uri):
+        from xml4h import nodes
         if uri == nodes.Node.XMLNS_URI:
             return 'xmlns'
         result = None
@@ -488,6 +492,7 @@ class ElementTreeAdapter(XmlImplAdapter):
         return result
 
     def _unpack_name(self, name, node):
+        from xml4h import nodes
         qname = prefix = local_name = ns_uri = None
         if name == 'xmlns':
             # Namespace URI of 'xmlns' is a constant

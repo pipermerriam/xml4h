@@ -5,7 +5,7 @@ except ImportError:
     import unittest
 import functools
 import os
-from StringIO import StringIO
+from io import StringIO
 
 import six
 
@@ -27,7 +27,7 @@ class TestBuilderMethods(unittest.TestCase):
     def test_builder_method_with_illegal_object(self):
         try:
             xml4h.build(123)
-        except Exception, ex:
+        except Exception as ex:
             self.assertEqual(
                 xml4h.exceptions.IncorrectArgumentTypeException,
                 ex.__class__)

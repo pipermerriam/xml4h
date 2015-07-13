@@ -5,7 +5,7 @@ except ImportError:
     import unittest
 import sys
 import functools
-from StringIO import StringIO
+from io import StringIO
 
 import xml4h
 

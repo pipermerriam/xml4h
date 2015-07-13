@@ -2,7 +2,6 @@ import re
 import copy
 
 from xml4h.impls.interface import XmlImplAdapter
-from xml4h import nodes, exceptions
 
 try:
     from lxml import etree
@@ -45,6 +44,7 @@ class LXMLAdapter(XmlImplAdapter):
 
     @classmethod
     def new_impl_document(cls, root_tagname, ns_uri=None, **kwargs):
+        from xml4h import nodes, exceptions
         root_nsmap = {}
         if ns_uri is not None:
             root_nsmap[None] = ns_uri
@@ -57,6 +57,7 @@ class LXMLAdapter(XmlImplAdapter):
         return doc
 
     def map_node_to_class(self, node):
+        from xml4h import nodes, exceptions
         if isinstance(node, etree._ProcessingInstruction):
             return nodes.ProcessingInstruction
         elif isinstance(node, etree._Comment):
@@ -81,6 +82,7 @@ class LXMLAdapter(XmlImplAdapter):
     # Document implementation methods
 
     def new_impl_element(self, tagname, ns_uri=None, parent=None):
+        from xml4h import nodes
         if ns_uri is not None:
             if ':' in tagname:
                 tagname = tagname.split(':')[1]
@@ -141,6 +143,7 @@ class LXMLAdapter(XmlImplAdapter):
         converted to the prefix name '_' so it can be used despite empty
         namespace prefixes being unsupported by XPath.
         """
+        from xml4h import nodes, exceptions
         if isinstance(node, etree._ElementTree):
             # Document node lxml.etree._ElementTree has no nsmap, lookup root
             root = self.get_impl_root(node)
@@ -236,6 +239,7 @@ class LXMLAdapter(XmlImplAdapter):
 
     def get_node_attributes(self, element, ns_uri=None):
         # TODO: Filter by ns_uri
+        from xml4h import nodes, exceptions
         attribs_by_qname = {}
         for n, v in element.attrib.items():
             qname, ns_uri, prefix, local_name = self._unpack_name(n, element)
@@ -279,6 +283,7 @@ class LXMLAdapter(XmlImplAdapter):
         return None
 
     def set_node_attribute_value(self, element, name, value, ns_uri=None):
+        from xml4h import nodes, exceptions
         prefix = None
         if ':' in name:
             prefix, name = name.split(':')
@@ -302,6 +307,7 @@ class LXMLAdapter(XmlImplAdapter):
             element.attrib[name] = value
 
     def remove_node_attribute(self, element, name, ns_uri=None):
+        from xml4h import nodes, exceptions
         if ns_uri is not None:
             name = '{%s}%s' % (ns_uri, name)
         elif ':' in name:
@@ -386,6 +392,7 @@ class LXMLAdapter(XmlImplAdapter):
         return None
 
     def lookup_ns_prefix_for_uri(self, node, uri):
+        from xml4h import nodes, exceptions
         if uri == nodes.Node.XMLNS_URI:
             return 'xmlns'
         result = None
@@ -410,6 +417,7 @@ class LXMLAdapter(XmlImplAdapter):
         return result
 
     def _unpack_name(self, name, node):
+        from xml4h import nodes, exceptions
         qname = prefix = local_name = ns_uri = None
         if name == 'xmlns':
             # Namespace URI of 'xmlns' is a constant
@@ -443,6 +451,7 @@ class LXMLAdapter(XmlImplAdapter):
         ancestor of the given node, meaning that the given node need not
         have its own attributes to apply that namespacing.
         """
+        from xml4h import nodes, exceptions
         curr_node = self.get_node_parent(node)
         while curr_node.__class__ == etree._Element:
             if (hasattr(curr_node, 'nsmap')

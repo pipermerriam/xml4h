@@ -6,8 +6,6 @@ Writer to serialize XML DOM documents or sections to text.
 import sys
 import codecs
 
-from xml4h import exceptions
-
 
 def write_node(node, writer=None, encoding='utf-8', indent=0, newline='',
         omit_declaration=False, node_depth=0, quote_char='"'):
@@ -149,6 +147,7 @@ def write_node(node, writer=None, encoding='utf-8', indent=0, newline='',
             else:
                 writer.write('/>')
         else:
+            from xml4h import exceptions
             raise exceptions.Xml4hImplementationBug(
                 'Cannot write node with class: %s' % node.__class__)
 

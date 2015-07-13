@@ -12,3 +12,6 @@ docs/.*
 
 # Tox virtualenvs
 .tox/
+
+# builds
+.eggs/

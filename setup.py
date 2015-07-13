@@ -3,7 +3,6 @@
 
 import os
 import sys
-import xml4h
 
 try:
     from setuptools import setup
@@ -23,8 +22,8 @@ elif sys.argv[-1] == 'test-coverage':
     sys.exit()
 
 setup(
-    name=xml4h.__title__,
-    version=xml4h.__version__,
+    name='xml4h',
+    version='0.2.0',
     description='XML for Humans in Python',
     long_description=open('README.rst').read(),
     author='James Murty',

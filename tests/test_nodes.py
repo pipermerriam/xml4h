@@ -551,7 +551,7 @@ class BaseTestNodes(object):
         try:
             self.xml4h_root.DoesNotExist
             self.fail('Expected AttributeError')
-        except AttributeError, e:
+        except AttributeError as e:
             self.assertEqual(
                 """<xml4h.nodes.Element: "DocRoot"> object"""
                 """ has no attribute 'DoesNotExist'""",
@@ -559,7 +559,7 @@ class BaseTestNodes(object):
         # Look up non-existent attribute by Python key name
         try:
             self.xml4h_root['not-an-attribute']
-        except KeyError, e:
+        except KeyError as e:
             self.assertEqual("'not-an-attribute'", str(e))
 
         # Look up child element by attribute
@@ -596,12 +596,12 @@ class BaseTestNodes(object):
         try:
             self.xml4h_root._leadingunderscore
             self.fail('Expected AttributeError')
-        except AttributeError, e:
+        except AttributeError as e:
             pass
         try:
             self.xml4h_root._leadingunderscore_
             self.fail('Expected AttributeError')
-        except AttributeError, e:
+        except AttributeError as e:
             pass
 
         # Look up an attribute by key name

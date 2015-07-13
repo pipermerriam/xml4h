@@ -1,5 +1,7 @@
 import collections
-from StringIO import StringIO
+from io import StringIO
+
+import six
 
 import xml4h
 
@@ -18,6 +20,7 @@ DOCUMENT_FRAGMENT_NODE = 11
 NOTATION_NODE = 12
 
 
+@six.python_2_unicode_compatible
 class Node(object):
     """
     Base class for *xml4h* DOM nodes that represent and interact with a
@@ -54,14 +57,9 @@ class Node(object):
         return (self.impl_document == other.impl_document
             and self.impl_node == other.impl_node)
 
-    def __unicode__(self):
+    def __str__(self):
         return u'<%s.%s>' % (
             self.__class__.__module__, self.__class__.__name__)
-
-    def __str__(self):
-        # TODO Degrade non-ASCII characters gracefully
-        # Avoid keyword args in encode call for compatibility with python 2.6
-        return self.__unicode__().encode('ascii', 'replace')
 
     def __repr__(self):
         return self.__str__()
@@ -586,7 +584,7 @@ class XPathMixin(object):
 
     def _maybe_wrap_node(self, node):
         # Don't try and wrap base types (e.g. attribute values or node text)
-        if isinstance(node, (basestring, int, long, float)):
+        if isinstance(node, six.string_types + (int, long, float)):
             return node
         else:
             return self.adapter.wrap_node(
@@ -663,22 +661,23 @@ class EntityReference(Node):
     # TODO
 
 
+@six.python_2_unicode_compatible
 class NameValueNodeMixin(Node):
     """
     Provide methods to access node name and value attributes, where the node
     name may also be composed of "prefix" and "local" components.
     """
 
-    def __unicode__(self):
+    def __str__(self):
         return u'<%s.%s: "%s">' % (
             self.__class__.__module__, self.__class__.__name__,
             self.name)
 
     def _tounicode(self, value):
-        if value is None or isinstance(value, unicode):
+        if value is None or isinstance(value, six.text_type):
             return value
         else:
-            return unicode(value)
+            return six.text_type(value)
 
     @property
     def prefix(self):
@@ -829,8 +828,8 @@ class Element(NameValueNodeMixin,
                 if ns_uri == self.adapter.get_node_namespace_uri(element):
                     my_ns_uri = None
             # Forcibly convert all data to unicode text
-            if not isinstance(v, basestring):
-                v = unicode(v)
+            if not isinstance(v, six.text_type):
+                v = six.text_type(v)
             if prefix:
                 qname = '%s:%s' % (prefix, name)
             else:
@@ -1022,8 +1021,8 @@ class Element(NameValueNodeMixin,
         :param text: text content to add to this element.
         :param type: string or anything that can be coerced by :func:`unicode`.
         """
-        if not isinstance(text, basestring):
-            text = unicode(text)
+        if not isinstance(text, six.text_type):
+            text = six.text_type(text)
         self._add_text(self.impl_node, text)
 
     def _add_comment(self, element, text):
@@ -1063,6 +1062,7 @@ class Element(NameValueNodeMixin,
         self._add_cdata(self.impl_node, data)
 
 
+@six.python_2_unicode_compatible
 class AttributeDict(object):
     """
     Dictionary-like object of element attributes that always reflects the
@@ -1086,8 +1086,8 @@ class AttributeDict(object):
     def __setitem__(self, name, value):
         prefix, name, ns_uri = self.adapter.get_ns_info_from_node_name(
             name, self.impl_element)
-        if not isinstance(value, basestring):
-            value = unicode(value)
+        if not isinstance(value, six.string_types):
+            value = six.text_type(value)
         self.adapter.set_node_attribute_value(
             self.impl_element, name, value, ns_uri)
 
@@ -1107,15 +1107,14 @@ class AttributeDict(object):
             name, self.impl_element)
         return self.adapter.has_node_attribute(self.impl_element, name, ns_uri)
 
-    def __unicode__(self):
+    def __str__(self):
+        # TODO: This is the original __unicode__ implementation.  The original
+        # __str__ implementation did an `ascii` encoding which is now missing.
+        # Not sure how critical this is.
         return u'<%s.%s: %s>' % (
             self.__class__.__module__, self.__class__.__name__,
             self.to_dict.items())
 
-    def __str__(self):
-        # TODO Degrade non-ASCII characters gracefully
-        # Avoid keyword args in encode call for compatibility with python 2.6
-        return self.__unicode__().encode('ascii', 'replace')
 
     def __repr__(self):
         return self.__str__()

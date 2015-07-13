@@ -48,7 +48,7 @@ as an argument::
     ...     first_film_elem.write_doc(f)
 
     >>> # Write to a string (BUT SEE SECTION BELOW...)
-    >>> from StringIO import StringIO
+    >>> from io import StringIO
     >>> str_writer = StringIO()
     >>> first_film_elem.write_doc(str_writer)
     >>> str_writer.getvalue()  # doctest:+ELLIPSIS
